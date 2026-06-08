@@ -5,7 +5,7 @@
   "type": "module",
   "description": "SGIS 통계지도 MCP Apps 서버 — Claude 오른쪽 패널에 한국 시도 단계구분도를 렌더링",
   "scripts": {
-    "build": "cross-env INPUT=mcp-app.html vite build",
+    "build": "cross-env INPUT=mcp-app.html vite build && node scripts/embed-ui.mjs",
     "serve": "tsx server.ts",
     "dev": "npm run build && npm run serve",
     "preview:ui": "vite --port 5173 --strictPort"

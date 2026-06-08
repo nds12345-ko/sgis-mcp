@@ -16,8 +16,6 @@ import {
 } from "@modelcontextprotocol/ext-apps/server";
 import cors from "cors";
 import express from "express";
-import fs from "node:fs/promises";
-import path from "node:path";
 import { z } from "zod";
 
 import {
@@ -27,6 +25,7 @@ import {
   STAT_TYPES,
   type StatType,
 } from "./src/sgis.js";
+import { UI_HTML } from "./src/ui-html.js";
 
 const DEFAULT_STAT: StatType = "population";
 const DEFAULT_YEAR = 2020;
@@ -184,12 +183,8 @@ registerAppResource(
   resourceUri,
   { mimeType: RESOURCE_MIME_TYPE },
   async () => {
-    const html = await fs.readFile(
-      path.join(import.meta.dirname, "dist", "mcp-app.html"),
-      "utf-8",
-    );
     return {
-      contents: [{ uri: resourceUri, mimeType: RESOURCE_MIME_TYPE, text: html }],
+      contents: [{ uri: resourceUri, mimeType: RESOURCE_MIME_TYPE, text: UI_HTML }],
     };
   },
 );
