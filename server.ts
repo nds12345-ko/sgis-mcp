@@ -110,17 +110,21 @@ function summarize(p: MapPayload): string {
 
 // ---- MCP 서버 + 도구/리소스 등록 ------------------------------------------------
 
-const server = new McpServer({
-  name: "SGIS 통계지도",
-  version: "1.0.0",
-});
-
 const resourceUri = "ui://sgis-statmap/mcp-app.html";
 
 const statTypeSchema = z
   .enum(["population", "household", "house"])
   .describe("통계 종류: population(인구)/household(가구)/house(주택)");
 const yearSchema = z.number().int().min(2000).max(2023).describe("기준 연도 (예: 2020)");
+
+// 각 요청마다 새 McpServer 인스턴스를 만든다 (Streamable HTTP 무상태 패턴).
+// 단일 인스턴스를 재사용하면 두 번째 요청에서
+// "Already connected to a transport" 오류가 발생한다.
+function buildMcpServer(): McpServer {
+const server = new McpServer({
+  name: "SGIS 통계지도",
+  version: "1.0.0",
+});
 
 // 1) 지도 UI를 띄우는 진입 도구 (LLM이 지도 질문 시 호출)
 registerAppTool(
@@ -190,6 +194,9 @@ registerAppResource(
   },
 );
 
+  return server;
+}
+
 // ---- Express HTTP 전송 (/mcp) ---------------------------------------------------
 
 const app = express();
@@ -201,11 +208,15 @@ app.get("/", (_req, res) => {
 });
 
 app.post("/mcp", async (req, res) => {
+  const server = buildMcpServer();
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
   });
-  res.on("close", () => transport.close());
+  res.on("close", () => {
+    transport.close();
+    server.close();
+  });
   await server.connect(transport);
   await transport.handleRequest(req, res, req.body);
 });
