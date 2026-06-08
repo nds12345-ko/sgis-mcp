@@ -1,0 +1,31 @@
+{
+  "name": "sgis-statmap-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SGIS 통계지도 MCP Apps 서버 — Claude 오른쪽 패널에 한국 시도 단계구분도를 렌더링",
+  "scripts": {
+    "build": "cross-env INPUT=mcp-app.html vite build",
+    "serve": "tsx server.ts",
+    "dev": "npm run build && npm run serve",
+    "preview:ui": "vite --port 5173 --strictPort"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.4",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}
